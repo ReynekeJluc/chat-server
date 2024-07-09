@@ -3,7 +3,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 
-import { addUser, findUser, getUsers } from './users.js';
+import { addUser, findUser, getUsers, removeUser } from './users.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -55,6 +55,22 @@ io.on('connection', socket => {
 
 		if (user) {
 			io.to(user.room).emit('message', { data: { user, message } });
+		}
+	});
+
+	socket.on('leftRoom', ({ params }) => {
+		const user = removeUser(params);
+
+		if (user) {
+			const { room, name } = user;
+
+			io.to(room).emit('message', {
+				data: { user: { name: 'Admin' }, message: `${name} is left` },
+			});
+
+			io.to(room).emit('joinRoom', {
+				data: { users: getUsers(room) },
+			});
 		}
 	});
 

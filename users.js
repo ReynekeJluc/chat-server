@@ -11,13 +11,7 @@ export const findUser = user => {
 	);
 };
 
-export const getUsers = room => {
-	users.filter(u => {
-		u.room === room;
-	});
-
-	return users;
-};
+export const getUsers = room => users.filter(u => u.room === room);
 
 export const addUser = user => {
 	const isExist = findUser(user);
@@ -32,4 +26,18 @@ export const addUser = user => {
 		isExist: !!isExist,
 		user: curUser,
 	};
+};
+
+export const removeUser = user => {
+	const foundUser = findUser(user);
+
+	if (foundUser) {
+		users = users.filter(
+			u =>
+				(u.room === foundUser.room && u.name !== foundUser.name) ||
+				u.room !== foundUser.room
+		);
+	}
+
+	return foundUser;
 };
