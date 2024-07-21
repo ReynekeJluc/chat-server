@@ -29,6 +29,8 @@ io.on('connection', socket => {
 
 		const { user, isExist } = addUser({ name, room });
 
+		console.log(user);
+
 		const userMessage = isExist
 			? `${
 					user.name === '' || user.name === undefined || user.name === null
@@ -47,9 +49,7 @@ io.on('connection', socket => {
 		socket.broadcast.to(user.room).emit('message', {
 			data: {
 				user: { name: 'Admin' },
-				message: `${
-					name === '' || name === undefined || name === null ? 'Anon' : name
-				} has joined`,
+				message: `${name} has joined`,
 			},
 		});
 
@@ -73,12 +73,7 @@ io.on('connection', socket => {
 			const { room, name } = user;
 
 			io.to(room).emit('message', {
-				data: {
-					user: { name: 'Admin' },
-					message: `${
-						name === '' || name === undefined || name === null ? 'Anon' : name
-					} is left`,
-				},
+				data: { user: { name: 'Admin' }, message: `${name} is left` },
 			});
 
 			io.to(room).emit('joinRoom', {
